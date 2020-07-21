@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+* {box-sizing: border-box}
+body {font-family: Verdana, sans-serif; margin:0}
+.mySlides {display: none}
+.currentSlide {display: inline}
+img {vertical-align: middle;}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 320px;
+  position: relative;
+  margin: auto;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  padding: 8px 12px;
+  bottom: 8px;
+  width: 320px;
+  height: 400px;
+  font-size: large;
+  font-weight: bold;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+  background-color: blue;
+}
+
+.textbutton{
+  cursor: pointer;
+  font-size: large;
+  font-weight: bold;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+  height: 80px;
+  color: #f2f2f2;
+  float:left;
+}
+/* Caption text */
+.donebutton{
+  width: 320px;
+  background-color: magenta;
+}
+
+/* Caption text */
+.yesbutton {
+  width: 160px;
+  background-color: green;
+}
+
+/* Caption text */
+.nobutton {
+  width: 160px;
+  background-color: red;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .prev, .next,.text {font-size: 11px}
+}
+</style>
+</head>
+<body>
+
+<div class="slideshow-container">
+
+<div class="mySlides actionSlide">
+  <div class="text">Action</div>
+  <a class="donebutton textbutton" onclick="click_done()">Done</a>
+</div>
+
+<div class="mySlides questionSlide">
+  <div class="text">Question</div>
+  <a class="yesbutton textbutton" onclick="click_yes()">Yes</a>
+  <a class="nobutton textbutton" onclick="click_no()">No</a>
+</div>
+
+</div>
+<br>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+class node{   constructor(text) {this.text = text;this.done = false; this.yes = false; this.no = false;} isQuestion() {return this.done===false}}
+
+var n1 = new node("Nouvel e-mail.");
+var n2 = new node("Est-ce-que vous devez entreprendre une action?");
+n1.done = n2;
+var n3 = new node("Lisez et archivez l'e-mail");
+var n4 = new node("Avez-vous le temps de traiter l'email?");
+n2.yes = n4;
+n2.no = n3;
+
+var n5 = new node("Ajoutez l'action à votre to do list et archivez le mail");
+var n6 = new node("Répondez ou transférez puis archivez l'e-mail");
+
+n4.yes = n6;
+n4.no = n5;
+
+var current_node = n1;
+
+showNode()
+
+$(document).bind('keypress', function(event) {
+    if( event.which === 13 && event.ctrlKey ) {
+    	slide = getCurrentSlide();
+        editText(slide);
+    }
+    if( event.which === 97 ) {
+        showAction();
+    }
+    if( event.which === 113 ) {
+        showQuestion();
+    }
+});
+
+function getCurrentSlide(){
+	return $(".currentSlide").first();
+}
+
+
+function showNode(){
+	if(current_node.isQuestion())
+	{
+		elem = showQuestion();
+	}
+	else
+	{
+		elem = showAction();
+	}
+	elem.children().first().text(current_node.text);
+	
+}
+
+function showQuestion(){
+	console.log('question')
+	$(".currentSlide").removeClass('currentSlide').css('display','none');
+	var elem = $(".questionSlide");
+	elem.addClass('currentSlide').css('display','block');
+	return elem;
+}
+
+function showAction(){
+	console.log('action')
+	$(".currentSlide").removeClass('currentSlide').css('display','none');
+	var elem = $(".actionSlide");
+	elem.addClass('currentSlide').css('display','block');
+	return elem;
+}
+
+function click_yes(){
+	current_node = current_node.yes;
+	showNode();
+}
+function click_no(){
+	current_node = current_node.no;
+	showNode();
+}
+function click_done(){
+	current_node = current_node.done;
+	showNode();
+}
+</script>
+
+</body>
+</html> 
